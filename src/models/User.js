@@ -5,22 +5,22 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-      minlength: 3,
-      required: true,
+      required: [true, "Name is mandatory"],
+      minlength: [3, "Name must be at least 3 characters"],
       trim: true,
     },
     mail: {
       type: String,
       unique: true,
       lowercase: true,
-      required: true,
+      required: [true, "Mail is mandatory"],
       trim: true,
       validate: [isEmail, "Invalid Mail Format"],
     },
     password: {
       type: String,
-      minlength: 5,
-      required: true,
+      required: [true, "Password is mandatory"],
+      minlength: [5, "Password must be at least 5 characters"],
       trim: true,
     },
     createdAt: {
