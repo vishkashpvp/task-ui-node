@@ -40,7 +40,25 @@ async function registerEmployee(data) {
   }
 }
 
+/**
+ * @summary Gets all employees from the db of the user.
+ * @returns { [Employee] } employees
+ * @throws { object } error
+ * @param { object } data
+ */
+async function userAllEmployees(data) {
+  try {
+    const employees = await Employee.find({
+      user_id: data.user_id,
+    });
+    return employees;
+  } catch (error) {
+    throw { error: error.message };
+  }
+}
+
 module.exports = {
   signupUser,
   registerEmployee,
+  userAllEmployees,
 };

@@ -56,6 +56,14 @@ employeeSchema.pre("save", async function (next) {
   next();
 });
 
+employeeSchema.pre("find", async function (next) {
+  const user = await User.findById(this._conditions.user_id);
+  if (!user) {
+    return next(new Error("User doesn't exist with given credentials"));
+  }
+  next();
+});
+
 const Employee = model("Employee", employeeSchema);
 
 module.exports = Employee;
