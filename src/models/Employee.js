@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const { default: isEmail } = require("validator/lib/isEmail");
+const User = require("./User");
 
 const employeeSchema = new Schema(
   {
@@ -35,11 +36,25 @@ const employeeSchema = new Schema(
       type: Date,
       default: () => new Date(),
     },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: User,
+      required: true,
+      index: true,
+    },
   },
   {
     collection: "Employees",
   }
 );
+
+employeeSchema.pre("save", async function (next) {
+  const user = await User.findById(this.user_id);
+  if (!user) {
+    return next(new Error("Invalid User"));
+  }
+  next();
+});
 
 const Employee = model("Employee", employeeSchema);
 
