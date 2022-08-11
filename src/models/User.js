@@ -1,5 +1,8 @@
+require("dotenv").config();
+
 const { Schema, model } = require("mongoose");
 const { default: isEmail } = require("validator/lib/isEmail");
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema(
   {
@@ -19,8 +22,6 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is mandatory"],
-      minlength: [5, "Password must be at least 5 characters"],
       trim: true,
     },
     createdAt: {
@@ -37,6 +38,15 @@ const userSchema = new Schema(
     collection: "Users",
   }
 );
+
+userSchema.pre("save", async function (next) {
+  let { password } = this;
+  this.password = await bcrypt.hash(
+    password,
+    parseInt(process.env.BCRYPT_ROUNDS)
+  );
+  next();
+});
 
 const User = model("User", userSchema);
 

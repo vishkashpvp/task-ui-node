@@ -3,6 +3,7 @@ const express = require("express");
 const router = new express.Router();
 
 const { signupUser } = require("../db/mongo");
+const { validateSignUpDetails } = require("../middleware/user-mw");
 
 router.get("/users", (req, res) => {
   res.status(404).send({
@@ -16,7 +17,7 @@ router.get("/users", (req, res) => {
  * @apiSuccess { object } user
  * @apiError { object } error
  */
-router.post("/user/signup", async (req, res) => {
+router.post("/user/signup", validateSignUpDetails, async (req, res) => {
   try {
     const created_user = await signupUser(req.body);
     res.status(201).send(created_user);
