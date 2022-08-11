@@ -12,6 +12,23 @@ function validateSignUpDetails(req, res, next) {
   }
 }
 
+function validateLogin(req, res, next) {
+  try {
+    if (!req.body.mail) {
+      throw new Error("Provide Mail ");
+    }
+    if (!req.body.password) {
+      throw new Error("Provide Password ");
+    }
+    next();
+  } catch (error) {
+    res
+      .status(400)
+      .send({ warning: "Mandatory Fields Missing", error: error.message });
+  }
+}
+
 module.exports = {
   validateSignUpDetails,
+  validateLogin,
 };

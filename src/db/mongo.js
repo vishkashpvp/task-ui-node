@@ -3,6 +3,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Employee = require("../models/Employee");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 const atlasURI = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@${process.env.ATLAS_ENDPOINT}/${process.env.ATLAS_DB_EMS}?retryWrites=true&w=majority`;
 
@@ -19,6 +20,32 @@ mongoose.connect(atlasURI, {
 async function signupUser(data) {
   try {
     const user = await User.create(data);
+    return user;
+  } catch (error) {
+    throw { error: error.message };
+  }
+}
+
+/**
+ * @summary gets user from the database.
+ * @returns { User } user
+ * @throws { object } error
+ * @param { object } data
+ */
+async function signinUser(data) {
+  try {
+    const user = await User.findOne({ mail: data.mail });
+
+    if (!user) {
+      throw new Error(`User doesn't exist with given mail ${data.mail}`);
+    }
+
+    const isMatch = await bcrypt.compare(data.password, user.password);
+
+    if (!isMatch) {
+      throw new Error("Unable to login. Please check credentials provided");
+    }
+
     return user;
   } catch (error) {
     throw { error: error.message };
@@ -59,6 +86,7 @@ async function userAllEmployees(data) {
 
 module.exports = {
   signupUser,
+  signinUser,
   registerEmployee,
   userAllEmployees,
 };
