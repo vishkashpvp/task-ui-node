@@ -7,6 +7,11 @@ const employeeRouter = require("./routers/employee-router");
 
 const app = express();
 
+const corsOptions = {
+  origin: true,
+  optionsSuccessStatus: 200,
+};
+
 app.use(cors());
 app.use(express.json());
 app.use(userRouter);
